@@ -138,7 +138,7 @@ fn main() {
     if modIndex > (modulators.len() - 1) as i32 {  hardFail("[E] Invalid modulator"); }
 
     let mut img = Default::default();
-    if let Ok(x) = ImageReader::open(iFile){ img = x.decode().unwrap() }
+    if let Ok(ok) = ImageReader::open(iFile){ img = ok.decode().unwrap() }
     else { hardFail("[E] Failed to open image file") }
 
     generator.tone(0u16, 500f32); //500ms header, not required but neat

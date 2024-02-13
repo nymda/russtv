@@ -33,7 +33,7 @@ pub fn buildModulators() -> Vec<&'static dyn Modulator> {
                 &M_PDX::PD160,
                 &M_PDX::PD180,
                 &M_PDX::PD240,
-                &M_PDX::PD290,];
+                &M_PDX::PD290];
 }
 pub fn generateVox(generator: &mut WavGenerator){
     generator.tone(1900u16, 100f32);
