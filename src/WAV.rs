@@ -1,6 +1,6 @@
 use std::fs::File;
 use std::mem::size_of_val;
-use crate::{PI, wav};
+use crate::{PI, WAV};
 use std::io::{Result, Write};
 
 #[repr(C)]
@@ -107,11 +107,11 @@ impl WavGenerator {
         return &self.header;
     }
 
-    pub fn save(&self, path: &str) -> std::io::Result<()> {
+    pub fn save(&self, path: &str) -> std::io::Result<(usize)> {
         let mut file = File::create(path)?;
 
         let header_bytes = unsafe {
-            std::slice::from_raw_parts(&self.header as *const wav::WavHeader as *const u8, std::mem::size_of::<wav::WavHeader>())
+            std::slice::from_raw_parts(&self.header as *const WAV::WavHeader as *const u8, std::mem::size_of::<WAV::WavHeader>())
         };
         file.write_all(header_bytes)?;
 
@@ -120,6 +120,6 @@ impl WavGenerator {
         };
         file.write_all(data_bytes)?;
 
-        Ok(())
+        Ok(header_bytes.len() + data_bytes.len())
     }
 }
