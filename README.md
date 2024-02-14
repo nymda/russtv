@@ -1,7 +1,7 @@
 # Russtv
 
 SSTV encoder written in rust.  
-Basically a rewrite of the core of https://github.com/nymda/WinSSTV.  
+Mostly rewritten from https://github.com/nymda/WinSSTV.  
 
 **supported SSTV methods:**  
 -BW8  
