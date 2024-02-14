@@ -2,7 +2,10 @@ use image::DynamicImage;
 use crate::{M_AVT, M_BWX, M_MAX, M_PDX, M_R24, M_R36, M_R72, M_SCX};
 use crate::WAV::WavGenerator;
 
+//CFMULTIPLIER is a seemingly arbitrary (yet very clos to pi?) value that is used to convert from integer RGB / YUV to a colour / luminance frequency.
+//I don't know where it's from, or why it is what it is, but it exists in some form in every SSTV encoder application.
 pub const CFMULTIPLIER: f32 = 3.1372549f32;
+
 pub struct ModulatorInfo {
     pub(crate) Name: &'static str,
     pub(crate) ResX: u32,
