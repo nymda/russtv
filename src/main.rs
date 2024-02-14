@@ -70,7 +70,7 @@ fn showModulators(Modulators: &Vec<&dyn Modulator>){
     let mut I: i8 = 0;
     println!("{0: <3} : {1: <10} : {2: <10}", "ID", "Name", "Resolution");
     for M in Modulators {
-        println!("{0: <3} : {1: <10} : [{2: <3}, {3: <3}]", I, M.Info().Name, M.Info().ResX, M.Info().ResY);
+        println!("{0: <3} : {1: <10} : {2: <3}x{3: <3}", I, M.Info().Name, M.Info().ResX, M.Info().ResY);
         I+=1;
     }
     exit(0);
