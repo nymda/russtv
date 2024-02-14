@@ -1,7 +1,6 @@
-use image::{DynamicImage, GrayImage, imageops::resize, RgbImage};
+use image::{DynamicImage, RgbImage};
 use image::imageops::FilterType;
 use crate::{SSTV, YUV, WavGenerator};
-use crate::M_R36::R36;
 use crate::SSTV::ModulatorInfo;
 
 pub fn encodePD(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
@@ -51,6 +50,7 @@ impl SSTV::Modulator for PD50 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "PD 50",
+            SName: "PD50",
             ResX: 320,
             ResY: 256,
             VIS: 0xDD
@@ -68,6 +68,7 @@ impl SSTV::Modulator for crate::M_PDX::PD90 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "PD 90",
+            SName: "PD90",
             ResX: 320,
             ResY: 256,
             VIS: 0x63
@@ -85,6 +86,7 @@ impl SSTV::Modulator for crate::M_PDX::PD120 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "PD 120",
+            SName: "PD120",
             ResX: 640,
             ResY: 496,
             VIS: 0x5F
@@ -102,6 +104,7 @@ impl SSTV::Modulator for crate::M_PDX::PD160 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "PD 160",
+            SName: "PD160",
             ResX: 512,
             ResY: 400,
             VIS: 0xE2
@@ -119,6 +122,7 @@ impl SSTV::Modulator for crate::M_PDX::PD180 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "PD 180",
+            SName: "PD180",
             ResX: 640,
             ResY: 496,
             VIS: 0x60
@@ -136,6 +140,7 @@ impl SSTV::Modulator for crate::M_PDX::PD240 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "PD 240",
+            SName: "PD240",
             ResX: 640,
             ResY: 496,
             VIS: 0xE1
@@ -153,6 +158,7 @@ impl SSTV::Modulator for crate::M_PDX::PD290 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "PD 290",
+            SName: "PD290",
             ResX: 800,
             ResY: 616,
             VIS: 0xDE

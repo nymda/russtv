@@ -1,7 +1,6 @@
-use image::{DynamicImage, GrayImage, imageops::resize, RgbImage};
+use image::{DynamicImage, RgbImage};
 use image::imageops::FilterType;
-use crate::{SSTV, YUV, WavGenerator};
-use crate::M_R36::R36;
+use crate::{SSTV, WavGenerator};
 use crate::SSTV::ModulatorInfo;
 
 pub fn encodeSC(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
@@ -10,6 +9,7 @@ pub fn encodeSC(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
 
     generator.tone(1200u16, 9.0f32);
     for y in 0..proc.height(){
+
         generator.tone(1500u16, 1.5f32);
         for x in 0..proc.width(){
             generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[1] as u16), mspp as f32);
@@ -38,8 +38,9 @@ impl SSTV::Modulator for SC1 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "Scottie 1",
+            SName: "Scottie1",
             ResX: 320,
-            ResY: 250,
+            ResY: 256,
             VIS: 0x3C
         };
     }
@@ -55,8 +56,9 @@ impl SSTV::Modulator for SC2 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "Scottie 2",
+            SName: "Scottie2",
             ResX: 320,
-            ResY: 250,
+            ResY: 256,
             VIS: 0xB8
         };
     }
@@ -72,8 +74,9 @@ impl SSTV::Modulator for crate::M_SCX::SCDX {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "Scottie DX",
+            SName: "ScottieDX",
             ResX: 320,
-            ResY: 250,
+            ResY: 256,
             VIS: 0xCC
         };
     }

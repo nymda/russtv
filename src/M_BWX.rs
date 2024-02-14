@@ -1,7 +1,6 @@
-use image::{DynamicImage, GrayImage, imageops::resize, RgbImage};
+use image::{DynamicImage, GrayImage};
 use image::imageops::FilterType;
-use crate::{SSTV, YUV, WavGenerator};
-use crate::M_R36::R36;
+use crate::{SSTV, WavGenerator};
 use crate::SSTV::ModulatorInfo;
 
 pub fn encodeBW(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
@@ -26,6 +25,7 @@ impl SSTV::Modulator for BW8 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "Robot BW8",
+            SName: "Robot8",
             ResX: 160,
             ResY: 120,
             VIS: 0x82
@@ -43,6 +43,7 @@ impl SSTV::Modulator for BW12 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "Robot BW12",
+            SName: "Robot12",
             ResX: 160,
             ResY: 120,
             VIS: 0x86

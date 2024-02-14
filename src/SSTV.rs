@@ -8,6 +8,7 @@ pub const CFMULTIPLIER: f32 = 3.1372549f32;
 
 pub struct ModulatorInfo {
     pub(crate) Name: &'static str,
+    pub(crate) SName: &'static str,
     pub(crate) ResX: u32,
     pub(crate) ResY: u32,
     pub(crate) VIS: u8,
@@ -21,8 +22,8 @@ pub trait Modulator {
 pub fn buildModulators() -> Vec<&'static dyn Modulator> {
     return vec![&M_BWX::BW8,
                 &M_BWX::BW12,
-                &M_R36::R36,
                 &M_R24::R24,
+                &M_R36::R36,
                 &M_R72::R72,
                 &M_SCX::SC1,
                 &M_SCX::SC2,

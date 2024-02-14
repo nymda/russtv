@@ -1,4 +1,4 @@
-use image::{DynamicImage, GrayImage, imageops::resize, RgbImage};
+use image::{DynamicImage, RgbImage};
 use image::imageops::FilterType;
 use crate::{SSTV, YUV, WavGenerator};
 use crate::SSTV::ModulatorInfo;
@@ -48,6 +48,7 @@ impl SSTV::Modulator for R72 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "Robot 72",
+            SName: "Robot72",
             ResX: 320,
             ResY: 240,
             VIS: 0x0C

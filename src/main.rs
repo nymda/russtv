@@ -8,14 +8,12 @@ mod YUV;
 mod M_R24;
 mod M_AVT;
 mod M_MAX;
-mod M_MRX;
 mod M_PDX;
 mod M_SCX;
 mod M_R72;
 
 use std::env;
 use std::process::exit;
-use std::io::{Result, Write};
 use crate::WAV::WavGenerator;
 use image::io::Reader as ImageReader;
 use crate::SSTV::Modulator;
@@ -70,10 +68,29 @@ fn showModulators(Modulators: &Vec<&dyn Modulator>){
     let mut I: i8 = 0;
     println!("{0: <3} : {1: <10} : {2: <10}", "ID", "Name", "Resolution");
     for M in Modulators {
-        println!("{0: <3} : {1: <10} : {2: <3}x{3: <3}", I, M.Info().Name, M.Info().ResX, M.Info().ResY);
+        println!("{0: <3} : {1: <10} : {2: <3}x{3: <3}", I, M.Info().SName, M.Info().ResX, M.Info().ResY);
         I+=1;
     }
     exit(0);
+}
+
+fn getModulator(userInput: String, Modulators: &Vec<&dyn Modulator>) -> i32 {
+    if let Ok(ok) = userInput.parse::<i32>(){
+        if ok < (Modulators.len() - 1) as i32 {
+            return ok;
+        }
+    }
+
+    let mut i = 0;
+    for m in Modulators {
+        if m.Info().SName.to_lowercase() == userInput.to_lowercase(){
+            return i;
+        }
+        i += 1;
+    }
+
+    hardFail("[E] Invalid modulator");
+    return 0; //unreachable
 }
 
 fn main() {
@@ -90,33 +107,33 @@ fn main() {
     for i in 0..env::args().len() {
         if let Some(cstr) = env::args().nth(i) {
             match cstr.to_lowercase().as_str() {
-                ("-h")=> {
+                "-h"=> {
                     showUsage();
                 }
 
-                ("-l")=> {
+                "-l"=> {
                     showModulators(&modulators);
                 }
 
-                ("-v")=> {
+                "-v"=> {
                     verbose = true;
                 }
 
-                ("-m")=>
+                "-m"=>
                     if let Some(val) = env::args().nth(i+1) {
                         moStr = val;
                     } else {
                         showUsage();
                     },
 
-                ("-i")=>
+                "-i"=>
                     if let Some(val) = env::args().nth(i+1) {
                         iFile = val;
                     } else {
                         showUsage();
                     },
 
-                ("-o")=>
+                "-o"=>
                     if let Some(val) = env::args().nth(i+1) {
                         oFile = val;
                     } else {
@@ -131,11 +148,7 @@ fn main() {
     if iFile == "" || oFile == "" || moStr == "" { showUsage(); }
 
     let mut generator: WavGenerator = WavGenerator::new(8000);
-    let mut modIndex = -1;
-
-    if let Ok(ok) = moStr.parse::<i32>(){ modIndex = ok }
-    else { hardFail("[E] Invalid modulator") }
-    if modIndex > (modulators.len() - 1) as i32 {  hardFail("[E] Invalid modulator"); }
+    let modIndex = getModulator(moStr, &modulators);
 
     let mut img = Default::default();
     if let Ok(ok) = ImageReader::open(iFile){ img = ok.decode().unwrap() }

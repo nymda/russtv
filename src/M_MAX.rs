@@ -1,7 +1,6 @@
-use image::{DynamicImage, GrayImage, imageops::resize, RgbImage};
+use image::{DynamicImage, RgbImage};
 use image::imageops::FilterType;
-use crate::{SSTV, YUV, WavGenerator};
-use crate::M_R36::R36;
+use crate::{SSTV, WavGenerator};
 use crate::SSTV::ModulatorInfo;
 
 pub fn encodeMA(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
@@ -21,13 +20,11 @@ pub fn encodeMA(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
         generator.tone(1500u16, separatorMS);
 
         for x in 0..proc.width(){
-            let px = proc.get_pixel(x,y);
             generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[2] as u16), mspp);
         }
         generator.tone(1500u16, separatorMS);
 
         for x in 0..proc.width(){
-            let px = proc.get_pixel(x,y);
             generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[0] as u16), mspp);
         }
         generator.tone(1500u16, separatorMS);
@@ -44,6 +41,7 @@ impl SSTV::Modulator for MA1 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "Martin 1",
+            SName: "Martin1",
             ResX: 320,
             ResY: 256,
             VIS: 0xAC
@@ -61,6 +59,7 @@ impl SSTV::Modulator for MA2 {
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
             Name: "Martin 2",
+            SName: "Martin2",
             ResX: 320,
             ResY: 256,
             VIS: 0x28

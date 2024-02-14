@@ -1,6 +1,6 @@
-use image::{DynamicImage, GrayImage, imageops::resize, RgbImage};
+use image::{DynamicImage, RgbImage};
 use image::imageops::FilterType;
-use crate::{SSTV, YUV, WavGenerator};
+use crate::{SSTV, WavGenerator};
 use crate::SSTV::ModulatorInfo;
 
 //AVT is great because there aren't any sync pulses, it just fucking yeets
@@ -28,7 +28,8 @@ impl SSTV::Modulator for AVT {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "ATV 90",
+            Name: "Amiga 90",
+            SName: "ATV90",
             ResX: 320,
             ResY: 240,
             VIS: 0x44

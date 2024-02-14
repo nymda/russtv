@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::mem::size_of_val;
 use crate::{PI, WAV};
-use std::io::{Result, Write};
+use std::io::Write;
 
 #[repr(C)]
 pub struct WavHeader {
@@ -44,7 +44,7 @@ impl WavGenerator {
                 format: 1,
                 channels: 1,
                 sampleRate: sRate,
-                sbc: 96000,
+                sbc: (sRate * 16 * 1) / 8, //16: BPS, 1: Channels, 8: Static per WAV specifications
                 bc: 2,
                 bps: 16,
                 data: ['d' as u8, 'a' as u8, 't' as u8, 'a' as u8],
@@ -99,15 +99,7 @@ impl WavGenerator {
         while self.angle > 2f64 * PI as f64 { self.angle -= 2f64 * PI as f64; }
     }
 
-    pub fn getData(&self) -> &Vec<i16> {
-        return &self.wav;
-    }
-
-    pub fn getHeader(&self) -> &WavHeader {
-        return &self.header;
-    }
-
-    pub fn save(&self, path: &str) -> std::io::Result<(usize)> {
+    pub fn save(&self, path: &str) -> std::io::Result<usize> {
         let mut file = File::create(path)?;
 
         let header_bytes = unsafe {
