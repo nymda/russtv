@@ -1,7 +1,7 @@
 use image::{DynamicImage, RgbImage};
 use image::imageops::FilterType;
 use crate::{SSTV, WavGenerator};
-use crate::SSTV::ModulatorInfo;
+use crate::SSTV::{FColourToFreq, ModulatorInfo};
 
 pub fn encodeMA(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
     let proc: RgbImage  = img.to_rgb8();
@@ -15,17 +15,17 @@ pub fn encodeMA(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
         generator.tone(1500u16, separatorMS);
 
         for x in 0..proc.width(){
-            generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[1] as u16), mspp);
+            generator.tone(FColourToFreq(proc.get_pixel(x, y)[1]), mspp);
         }
         generator.tone(1500u16, separatorMS);
 
         for x in 0..proc.width(){
-            generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[2] as u16), mspp);
+            generator.tone(FColourToFreq(proc.get_pixel(x, y)[2]), mspp);
         }
         generator.tone(1500u16, separatorMS);
 
         for x in 0..proc.width(){
-            generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[0] as u16), mspp);
+            generator.tone(FColourToFreq(proc.get_pixel(x, y)[0]), mspp);
         }
         generator.tone(1500u16, separatorMS);
     }
@@ -40,8 +40,7 @@ impl SSTV::Modulator for MA1 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "Martin 1",
-            SName: "Martin1",
+            Aliases: vec!["Martin 1", "Martin1", "MA1"],
             ResX: 320,
             ResY: 256,
             VIS: 0xAC
@@ -58,8 +57,7 @@ impl SSTV::Modulator for MA2 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "Martin 2",
-            SName: "Martin2",
+            Aliases: vec!["Martin 2", "Martin2", "MA2"],
             ResX: 320,
             ResY: 256,
             VIS: 0x28

@@ -1,7 +1,7 @@
 use image::{DynamicImage, RgbImage};
 use image::imageops::FilterType;
 use crate::{SSTV, WavGenerator};
-use crate::SSTV::ModulatorInfo;
+use crate::SSTV::{FColourToFreq, ModulatorInfo};
 
 //AVT is great because there aren't any sync pulses, it just fucking yeets
 
@@ -14,22 +14,21 @@ impl SSTV::Modulator for AVT {
 
         for y in 0..proc.height(){
             for x in 0..proc.width(){
-                generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[1] as u16), mspp);
+                generator.tone(FColourToFreq(proc.get_pixel(x, y)[1]), mspp);
             }
 
             for x in 0..proc.width(){
-                generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[2] as u16), mspp);
+                generator.tone(FColourToFreq(proc.get_pixel(x, y)[2]), mspp);
             }
 
             for x in 0..proc.width(){
-                generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[0] as u16), mspp);
+                generator.tone(FColourToFreq(proc.get_pixel(x, y)[0]), mspp);
             }
         }
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "Amiga 90",
-            SName: "ATV90",
+            Aliases: vec!["Amiga 90", "ATV90"],
             ResX: 320,
             ResY: 240,
             VIS: 0x44

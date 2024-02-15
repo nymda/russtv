@@ -1,7 +1,7 @@
 use image::{DynamicImage, GrayImage};
 use image::imageops::FilterType;
 use crate::{SSTV, WavGenerator};
-use crate::SSTV::ModulatorInfo;
+use crate::SSTV::{FColourToFreq, ModulatorInfo};
 
 pub fn encodeBW(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
     let proc: GrayImage = img.to_luma8();
@@ -10,7 +10,7 @@ pub fn encodeBW(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
         generator.tone(1200u16, 6f32);
         generator.tone(1500u16, 2f32);
         for x in 0..proc.width(){
-            generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[0] as u16), mspp as f32);
+            generator.tone(FColourToFreq(proc.get_pixel(x, y)[0]), mspp as f32);
         }
     }
 }
@@ -24,8 +24,7 @@ impl SSTV::Modulator for BW8 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "Robot BW8",
-            SName: "Robot8",
+            Aliases: vec!["Robot BW8", "Robot8", "BW8"],
             ResX: 160,
             ResY: 120,
             VIS: 0x82
@@ -42,8 +41,7 @@ impl SSTV::Modulator for BW12 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "Robot BW12",
-            SName: "Robot12",
+            Aliases: vec!["Robot BW12", "Robot12", "BW12"],
             ResX: 160,
             ResY: 120,
             VIS: 0x86

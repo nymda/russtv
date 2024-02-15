@@ -1,7 +1,7 @@
 use image::{DynamicImage, RgbImage};
 use image::imageops::FilterType;
 use crate::{SSTV, WavGenerator};
-use crate::SSTV::ModulatorInfo;
+use crate::SSTV::{FColourToFreq, ModulatorInfo};
 
 pub fn encodeSC(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
     let proc: RgbImage = img.to_rgb8();
@@ -12,18 +12,18 @@ pub fn encodeSC(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
 
         generator.tone(1500u16, 1.5f32);
         for x in 0..proc.width(){
-            generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[1] as u16), mspp as f32);
+            generator.tone(FColourToFreq(proc.get_pixel(x, y)[1]), mspp as f32);
         }
 
         generator.tone(1500u16, 1.5f32);
         for x in 0..proc.width(){
-            generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[2] as u16), mspp as f32);
+            generator.tone(FColourToFreq(proc.get_pixel(x, y)[2]), mspp as f32);
         }
 
         generator.tone(1200u16, 9.0f32);
         generator.tone(1500u16, 1.5f32);
         for x in 0..proc.width(){
-            generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * proc.get_pixel(x, y)[0] as u16), mspp as f32);
+            generator.tone(FColourToFreq(proc.get_pixel(x, y)[0]), mspp as f32);
         }
     }
 }
@@ -37,8 +37,7 @@ impl SSTV::Modulator for SC1 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "Scottie 1",
-            SName: "Scottie1",
+            Aliases: vec!["Scottie 1", "Scottie1", "SC1"],
             ResX: 320,
             ResY: 256,
             VIS: 0x3C
@@ -55,8 +54,7 @@ impl SSTV::Modulator for SC2 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "Scottie 2",
-            SName: "Scottie2",
+            Aliases: vec!["Scottie 2", "Scottie2", "SC2"],
             ResX: 320,
             ResY: 256,
             VIS: 0xB8
@@ -73,8 +71,7 @@ impl SSTV::Modulator for crate::M_SCX::SCDX {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "Scottie DX",
-            SName: "ScottieDX",
+            Aliases: vec!["Scottie DX", "ScottieDX", "SCDX", "SDX"],
             ResX: 320,
             ResY: 256,
             VIS: 0xCC

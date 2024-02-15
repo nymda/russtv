@@ -14,6 +14,8 @@ mod M_R72;
 
 use std::env;
 use std::process::exit;
+use std::time::{Duration, Instant};
+use image::DynamicImage;
 use crate::WAV::WavGenerator;
 use image::io::Reader as ImageReader;
 use crate::SSTV::Modulator;
@@ -21,24 +23,24 @@ use crate::SSTV::Modulator;
 const PI: f32 = std::f32::consts::PI;
 
 // ID  : Name       : Resolution
-// 0   : Robot BW8  : [160, 120]
-// 1   : Robot BW12 : [160, 120]
-// 2   : Robot 36   : [320, 240]
-// 3   : Robot 24   : [160, 120]
-// 4   : Robot 72   : [320, 240]
-// 5   : Scottie 1  : [320, 250]
-// 6   : Scottie 2  : [320, 250]
-// 7   : Scottie DX : [320, 250]
-// 8   : Martin 1   : [320, 256]
-// 9   : Martin 2   : [320, 256]
-// 10  : ATV 90     : [320, 240]
-// 11  : PD 50      : [320, 256]
-// 12  : PD 90      : [320, 256]
-// 13  : PD 120     : [640, 496]
-// 14  : PD 160     : [512, 400]
-// 15  : PD 180     : [640, 496]
-// 16  : PD 240     : [640, 496]
-// 17  : PD 290     : [800, 616]
+// 0   : Robot8     : 160x120
+// 1   : Robot12    : 160x120
+// 2   : Robot24    : 160x120
+// 3   : Robot36    : 320x240
+// 4   : Robot72    : 320x240
+// 5   : Scottie1   : 320x256
+// 6   : Scottie2   : 320x256
+// 7   : ScottieDX  : 320x256
+// 8   : Martin1    : 320x256
+// 9   : Martin2    : 320x256
+// 10  : ATV90      : 320x240
+// 11  : PD50       : 320x256
+// 12  : PD90       : 320x256
+// 13  : PD120      : 640x496
+// 14  : PD160      : 512x400
+// 15  : PD180      : 640x496
+// 16  : PD240      : 640x496
+// 17  : PD290      : 800x616
 
 fn hardFail(err: &str){
     //this doesnt have throw()
@@ -58,7 +60,7 @@ fn showUsage(){
                 \n    -H Show this screen\
                 \n    -V Enable verbosity\
                 \n    -L List available modulators\
-                \n    -M Set modulator (Required, see -LM)\
+                \n    -M Set modulator (Required, see -L)\
                 \n    -I Set input file (Required)\
                 \n    -O Set output file (Required)");
     exit(0);
@@ -68,7 +70,7 @@ fn showModulators(Modulators: &Vec<&dyn Modulator>){
     let mut I: i8 = 0;
     println!("{0: <3} : {1: <10} : {2: <10}", "ID", "Name", "Resolution");
     for M in Modulators {
-        println!("{0: <3} : {1: <10} : {2: <3}x{3: <3}", I, M.Info().SName, M.Info().ResX, M.Info().ResY);
+        println!("{0: <3} : {1: <10} : {2: <3}x{3: <3}", I, M.Info().Aliases[1], M.Info().ResX, M.Info().ResY);
         I+=1;
     }
     exit(0);
@@ -81,16 +83,17 @@ fn getModulator(userInput: String, Modulators: &Vec<&dyn Modulator>) -> i32 {
         }
     }
 
-    let mut i = 0;
+    let mut i: i32 = 0;
     for m in Modulators {
-        if m.Info().SName.to_lowercase() == userInput.to_lowercase(){
-            return i;
+        for a in m.Info().Aliases {
+            if a.to_lowercase() == userInput.to_lowercase() {
+                return i;
+            }
         }
         i += 1;
     }
 
-    hardFail("[E] Invalid modulator");
-    return 0; //unreachable
+    return -1;
 }
 
 fn main() {
@@ -148,24 +151,26 @@ fn main() {
     if iFile == "" || oFile == "" || moStr == "" { showUsage(); }
 
     let mut generator: WavGenerator = WavGenerator::new(8000);
-    let modIndex = getModulator(moStr, &modulators);
+    let modIndex: i32 = getModulator(moStr, &modulators);
+    if modIndex < 0 { hardFail("[E] Invalid modulator"); }
 
-    let mut img = Default::default();
+    let mut img:DynamicImage = Default::default();
     if let Ok(ok) = ImageReader::open(iFile){ img = ok.decode().unwrap() }
     else { hardFail("[E] Failed to open image file") }
 
+    let now: Instant = Instant::now();
     generator.tone(0u16, 500f32); //500ms header, not required but neat
     SSTV::generateVox(&mut generator); //vox tone
-    modulators[modIndex as usize].ModulateSSTV(&mut generator, img);
-    generator.tone(0u16, 500f32);
+    modulators[modIndex as usize].ModulateSSTV(&mut generator, img); //actual SSTV signal
+    generator.tone(0u16, 500f32);  //500ms footer, also not required but neat
+    let elapsed: Duration = now.elapsed();
 
-    let mut writtenBytes = 0;
+    let mut writtenBytes: usize = 0;
     if let Ok(bytes) = generator.save(oFile.as_str()) { writtenBytes = bytes; }
     else { hardFail("[E] Failed to save WAV file") }
 
-    println!("[I] Finished encoding");
+    println!("[I] Finished encoding ({} | {}ms)", modulators[modIndex as usize].Info().Aliases[0], elapsed.as_millis());
     if verbose {
-        println!("[V] Modulator   : {}", modulators[modIndex as usize].Info().Name);
         println!("[V] Samples     : {}", generator.totalSamples);
         println!("[V] Expected MS : {}", generator.expectedMs);
         println!("[V] Actual MS   : {}", generator.actualMs);

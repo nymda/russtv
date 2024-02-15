@@ -2,13 +2,8 @@ use image::DynamicImage;
 use crate::{M_AVT, M_BWX, M_MAX, M_PDX, M_R24, M_R36, M_R72, M_SCX};
 use crate::WAV::WavGenerator;
 
-//CFMULTIPLIER is a seemingly arbitrary (yet very clos to pi?) value that is used to convert from integer RGB / YUV to a colour / luminance frequency.
-//I don't know where it's from, or why it is what it is, but it exists in some form in every SSTV encoder application.
-pub const CFMULTIPLIER: f32 = 3.1372549f32;
-
 pub struct ModulatorInfo {
-    pub(crate) Name: &'static str,
-    pub(crate) SName: &'static str,
+    pub(crate) Aliases: Vec<&'static str>,
     pub(crate) ResX: u32,
     pub(crate) ResY: u32,
     pub(crate) VIS: u8,
@@ -67,4 +62,12 @@ pub fn generateVis(generator: &mut WavGenerator, vis: u8){
     }
 
     generator.tone(1200u16, 30f32);
+}
+
+// pub fn IColourToFreq(c: u8) -> u16 {
+//     return (1500 + (c as i32 * (2300 - 1500) / 256)) as u16;
+// }
+
+pub fn FColourToFreq(c: u8) -> u16 {
+    return (1500f32 + (3.125f32 * c as f32)) as u16;
 }

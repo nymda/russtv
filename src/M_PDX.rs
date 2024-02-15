@@ -1,7 +1,7 @@
 use image::{DynamicImage, RgbImage};
 use image::imageops::FilterType;
 use crate::{SSTV, YUV, WavGenerator};
-use crate::SSTV::ModulatorInfo;
+use crate::SSTV::{FColourToFreq, ModulatorInfo};
 
 pub fn encodePD(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
     let proc: RgbImage  = img.to_rgb8();
@@ -16,26 +16,26 @@ pub fn encodePD(generator: &mut WavGenerator, img: DynamicImage, lineMS: f32){
 
         for x in 0..proc.width(){
             let px = proc.get_pixel(x,y);
-            generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * YUV::Y(px[0], px[1], px[2]) as u16), mspp);
+            generator.tone(FColourToFreq(YUV::Y(px[0], px[1], px[2])), mspp);
         }
 
         for x in 0..proc.width(){
             let px1 = proc.get_pixel(x,y);
             let px2 = proc.get_pixel(x,y+1);
             let avg = (YUV::V(px1[0], px1[1], px1[2]) as u16 + YUV::V(px2[0], px2[1], px2[2]) as u16) / 2u16;
-            generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * avg), mspp);
+            generator.tone(FColourToFreq(avg as u8), mspp);
         }
 
         for x in 0..proc.width(){
             let px1 = proc.get_pixel(x,y);
             let px2 = proc.get_pixel(x,y+1);
             let avg = (YUV::U(px1[0], px1[1], px1[2]) as u16 + YUV::U(px2[0], px2[1], px2[2]) as u16) / 2u16;
-            generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * avg), mspp);
+            generator.tone(FColourToFreq(avg as u8), mspp);
         }
 
         for x in 0..proc.width(){
             let px = proc.get_pixel(x,y+1);
-            generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * YUV::Y(px[0], px[1], px[2]) as u16), mspp);
+            generator.tone(FColourToFreq(YUV::Y(px[0], px[1], px[2])), mspp);
         }
     }
 }
@@ -49,8 +49,7 @@ impl SSTV::Modulator for PD50 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "PD 50",
-            SName: "PD50",
+            Aliases: vec!["PD 50", "PD50"],
             ResX: 320,
             ResY: 256,
             VIS: 0xDD
@@ -67,8 +66,7 @@ impl SSTV::Modulator for crate::M_PDX::PD90 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "PD 90",
-            SName: "PD90",
+            Aliases: vec!["PD 90", "PD90"],
             ResX: 320,
             ResY: 256,
             VIS: 0x63
@@ -85,8 +83,7 @@ impl SSTV::Modulator for crate::M_PDX::PD120 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "PD 120",
-            SName: "PD120",
+            Aliases: vec!["PD 120", "PD120"],
             ResX: 640,
             ResY: 496,
             VIS: 0x5F
@@ -103,8 +100,7 @@ impl SSTV::Modulator for crate::M_PDX::PD160 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "PD 160",
-            SName: "PD160",
+            Aliases: vec!["PD 160", "PD160"],
             ResX: 512,
             ResY: 400,
             VIS: 0xE2
@@ -121,8 +117,7 @@ impl SSTV::Modulator for crate::M_PDX::PD180 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "PD 180",
-            SName: "PD180",
+            Aliases: vec!["PD 180", "PD180"],
             ResX: 640,
             ResY: 496,
             VIS: 0x60
@@ -139,8 +134,7 @@ impl SSTV::Modulator for crate::M_PDX::PD240 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "PD 240",
-            SName: "PD240",
+            Aliases: vec!["PD 240", "PD240"],
             ResX: 640,
             ResY: 496,
             VIS: 0xE1
@@ -157,8 +151,7 @@ impl SSTV::Modulator for crate::M_PDX::PD290 {
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "PD 290",
-            SName: "PD290",
+            Aliases: vec!["PD 290", "PD290"],
             ResX: 800,
             ResY: 616,
             VIS: 0xDE

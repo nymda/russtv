@@ -1,7 +1,7 @@
 use image::{DynamicImage, RgbImage};
 use image::imageops::FilterType;
 use crate::{SSTV, YUV, WavGenerator};
-use crate::SSTV::ModulatorInfo;
+use crate::SSTV::{FColourToFreq, ModulatorInfo};
 
 pub(crate) struct R72;
 impl SSTV::Modulator for R72 {
@@ -25,7 +25,7 @@ impl SSTV::Modulator for R72 {
 
             for x in 0..proc.width(){
                 let px = proc.get_pixel(x,y);
-                generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * YUV::Y(px[0], px[1], px[2]) as u16), mspp_Y);
+                generator.tone(FColourToFreq(YUV::Y(px[0], px[1], px[2])), mspp_Y);
             }
 
             generator.tone(1500u16, separatorMs);
@@ -33,7 +33,7 @@ impl SSTV::Modulator for R72 {
 
             for x in 0..proc.width(){
                 let px = proc.get_pixel(x,y);
-                generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * YUV::V(px[0], px[1], px[2]) as u16), mspp_UV);
+                generator.tone(FColourToFreq(YUV::V(px[0], px[1], px[2])), mspp_UV);
             }
 
             generator.tone(2300u16, separatorMs);
@@ -41,14 +41,13 @@ impl SSTV::Modulator for R72 {
 
             for x in 0..proc.width(){
                 let px = proc.get_pixel(x,y);
-                generator.tone(1500 + (SSTV::CFMULTIPLIER as u16 * YUV::U(px[0], px[1], px[2]) as u16), mspp_UV);
+                generator.tone(FColourToFreq(YUV::U(px[0], px[1], px[2])), mspp_UV);
             }
         }
     }
     fn Info(&self) -> ModulatorInfo {
         return ModulatorInfo{
-            Name: "Robot 72",
-            SName: "Robot72",
+            Aliases: vec!["Robot 72", "Robot72", "R72"],
             ResX: 320,
             ResY: 240,
             VIS: 0x0C
